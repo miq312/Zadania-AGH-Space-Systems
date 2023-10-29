@@ -1,0 +1,4 @@
+../Core/Src/uart.c:10:6:UART_Init	8	static
+../Core/Src/uart.c:23:6:send_frame	24	static
+../Core/Src/uart.c:44:6:receive_frame	288	static
+../Core/Src/uart.c:66:6:callback	24	static
