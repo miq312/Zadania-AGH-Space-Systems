@@ -56,13 +56,13 @@ static void MX_TIM3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-float calc_pwm(float val)										//Linearyzacja dzialania ukladu
+float calc_pwm(float val)						//Linearyzacja dzialania ukladu
 {
     const float k = 0.13f;
     const float x0 = 70.0f;
     return 10000.0f / (1.0f + exp(-k * (val - x0)));
 }
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 	//Obsluga przerwan
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 		//Obsluga przerwan
 {
   if (htim == &htim3) {
     HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -109,14 +109,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   int counter = 0;
-  uint32_t last_ms = HAL_GetTick();											//Pobranie czasu pracy mikrokontrolera
+  uint32_t last_ms = HAL_GetTick();							//Pobranie czasu pracy mikrokontrolera
 
   while (1)
   {
 	  uint32_t now = HAL_GetTick();
 	  if (now - last_ms >= 2000)
 	  {
-		  float r = 500 * (sin(counter / 31.8f));							//Wykres sinusoidalny
+		  float r = 500 * (sin(counter / 31.8f));				//Wykres sinusoidalny
 	  	  float g = 500 * (counter / 200.0f - floor(counter / 200.0f));		//Wykres w ksztalcie pily
 	  	  float b = 500 * (2.0 * fabs(fmod(counter * 0.005, 1.0) - 0.5));	//Wykres w ksztalcie trojkata
 
