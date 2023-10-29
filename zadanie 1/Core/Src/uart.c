@@ -10,22 +10,22 @@ UART_HandleTypeDef huart2;
 void UART_Init(void)
 {
 	huart2.Instance = USART2; 						// Ustawienie instancji UART na USART2.
-	huart2.Init.BaudRate = 115200; 					// Predkosc transmisji na 115200.
-	huart2.Init.WordLength = UART_WORDLENGTH_8B;	// Dlugosc slowa na 8 bitow
-	huart2.Init.StopBits = UART_STOPBITS_1;			// Ilosc bitow stopu na 1
-	huart2.Init.Parity = UART_PARITY_NONE;			// Brak parzystosci
-	huart2.Init.Mode = UART_MODE_TX_RX;				// Tryb UART transmit i receive
-	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;	// Wylaczenie kontroli przeplywu sprzetowego
-	huart2.Init.OverSampling = UART_OVERSAMPLING_16;// Ustawienie oversampling na 16
+	huart2.Init.BaudRate = 115200; 						// Predkosc transmisji na 115200.
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;				// Dlugosc slowa na 8 bitow
+	huart2.Init.StopBits = UART_STOPBITS_1;					// Ilosc bitow stopu na 1
+	huart2.Init.Parity = UART_PARITY_NONE;					// Brak parzystosci
+	huart2.Init.Mode = UART_MODE_TX_RX;					// Tryb UART transmit i receive
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;				// Wylaczenie kontroli przeplywu sprzetowego
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;			// Ustawienie oversampling na 16
 	HAL_UART_Init(&huart2);							// Inicjalizacja UART z ustawieniami konfiguracji
 }
 
 void send_frame(uint8_t id, uint8_t length, uint8_t *payload)
 {
   uint8_t *frame;  							// Wskaznik do pola danych
-  frame = (uint8_t *)malloc(length + 3); 	// Alokuje pamiec na pole danych
+  frame = (uint8_t *)malloc(length + 3); 				// Alokuje pamiec na pole danych
   if (frame == NULL) {
-	  	  	  	  	  	  	  	  	  	    // Obsluga bledu alokacji pamieci
+	  	  	  	  	  	  	  	  	// Obsluga bledu alokacji pamieci
     Error_Handler();
   }
 
@@ -33,21 +33,21 @@ void send_frame(uint8_t id, uint8_t length, uint8_t *payload)
   frame[1] = id;    					// ID
   frame[2] = length;  					// LEN
   for (int i = 0; i < length; i++) {
-    frame[3 + i] = payload[i];  		// PAYLOAD
+    frame[3 + i] = payload[i];  			// PAYLOAD
   }
 
   HAL_UART_Transmit(&huart2, frame, length + 3, HAL_MAX_DELAY);
 
-  free(frame); 							// Zwolnienie zaalokowanej pamieci po przeslaniu ramki
+  free(frame); 									// Zwolnienie zaalokowanej pamieci po przeslaniu ramki
 }
 
 void receive_frame(uint8_t *id, uint8_t *length, uint8_t *payload)
 {
-  uint8_t frame[256]; 									// Bufor na odebrana ramke
+  uint8_t frame[256]; 								// Bufor na odebrana ramke
   HAL_StatusTypeDef status;
-  status = HAL_UART_Receive(&huart2, frame, 3, 10000);	// Odczyt danych START, ID i LEN z timeoutem
+  status = HAL_UART_Receive(&huart2, frame, 3, 10000);				// Odczyt danych START, ID i LEN z timeoutem
   if (status != HAL_OK) {
-	  	  	  	  	  	  	  	  	  	  	  	  	    // Obsluga timeoutu
+	  	  	  	  	  	  	  	  	  	// Obsluga timeoutu
     Error_Handler();
   }
 
@@ -56,11 +56,11 @@ void receive_frame(uint8_t *id, uint8_t *length, uint8_t *payload)
 
   status = HAL_UART_Receive(&huart2, payload, *length, 10000); // Odczyt PAYLOAD z timeoutem
   if (status != HAL_OK) {
-	  	  	  	  	  	  	  	  	  	  	  	  	  	  	   // Obsluga timeoutu
+	  	  	  	  	  	  	  	  	  	  	  	// Obsluga timeoutu
 	  Error_Handler();
   }
 
-  callback(*length, payload);							// Wywolanie funkcji zwrotnej (callback) po otrzymaniu ramki
+  callback(*length, payload);									// Wywolanie funkcji zwrotnej (callback) po otrzymaniu ramki
 }
 
 void callback(uint8_t len, uint8_t* payload)
